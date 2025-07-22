@@ -1,0 +1,8 @@
+{
+  "code-runner.runInTerminal": true,
+  "code-runner.saveFileBeforeRun": true,
+  "files.autoSave": "afterDelay",
+  "code-runner.executorMap": {
+    "javascript": "node $fileName"
+  }
+}

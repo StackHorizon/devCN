@@ -10,5 +10,17 @@
     "workspacePath": "/Users/ciro/Desktop/devCN/workspaces/mario.rossi@itis-molinari.eu/prova python",
     "url": "http://localhost:41121",
     "status": "running"
+  },
+  {
+    "containerId": "f59ffb45f8c89c8aa5a32895edb810a0f834c2252f6c8a425ef580562f8229af",
+    "containerName": "vscode-mario-rossi-itis-molinari-eu-nodejs-1753203081720",
+    "nomeAmbiente": "nodejs",
+    "email": "mario.rossi@itis-molinari.eu",
+    "tipoAmbiente": "nodejs",
+    "dataCreazione": "2025-07-22T16:51:23.257Z",
+    "hostPort": 39115,
+    "workspacePath": "/Users/ciro/Desktop/devCN/workspaces/mario.rossi@itis-molinari.eu/nodejs",
+    "url": "http://localhost:39115",
+    "status": "running"
   }
 ]
