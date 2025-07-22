@@ -1,0 +1,14 @@
+[
+  {
+    "containerId": "0f0b7e37c0277b8388ba658905dcb1e130ee8d284f1835715871102c28bc436a",
+    "containerName": "vscode-mario-rossi-itis-molinari-eu-prova-python-1753198562693",
+    "nomeAmbiente": "prova python",
+    "email": "mario.rossi@itis-molinari.eu",
+    "tipoAmbiente": "python",
+    "dataCreazione": "2025-07-22T15:36:05.962Z",
+    "hostPort": 41121,
+    "workspacePath": "/Users/ciro/Desktop/devCN/workspaces/mario.rossi@itis-molinari.eu/prova python",
+    "url": "http://localhost:41121",
+    "status": "running"
+  }
+]

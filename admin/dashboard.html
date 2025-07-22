@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Studente</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);
+            background-attachment: fixed;
+            height: 100vh;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            color: #1e293b;
+        }
+        
+        .main-container {
+            height: 100vh;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            color: white;
+            border-radius: 20px 20px 0 0 !important;
+            border: none;
+            padding: 2rem 2.5rem;
+            flex-shrink: 0;
+        }
+        
+        .card-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .card-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+        
+        .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .welcome-section {
+            text-align: center;
+            padding: 3rem;
+        }
+        
+        .student-info {
+            background: rgba(40, 167, 69, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Stili per gli ambienti Docker */
+        .environments-section {
+            padding: 2.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            gap: 1rem;
+        }
+        
+        .environments-section h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+        
+        .input-group {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .input-group-text {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: none;
+            color: #64748b;
+        }
+        
+        .form-control {
+            border: none;
+            padding: 0.875rem 1rem;
+            font-size: 1rem;
+        }
+        
+        .table-container {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            background: white;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-height: 400px;
+            min-height: 300px;
+        }
+        
+        .table-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .table {
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+        
+        .table thead th {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: white;
+            border: none;
+            font-weight: 600;
+            padding: 1.25rem 1.5rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        /* Scrollbar personalizzata */
+        .table-wrapper::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .table-wrapper::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border-radius: 4px;
+        }
+        
+        .table-wrapper::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        }
+        
+        .table {
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+        
+        .table thead th {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: white;
+            border: none;
+            font-weight: 600;
+            padding: 1.25rem 1.5rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .table tbody td {
+            padding: 1.25rem 1.5rem;
+            vertical-align: middle;
+            border-color: rgba(0, 0, 0, 0.04);
+            background: white;
+        }
+        
+        .environment-row:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.03) 0%, rgba(139, 92, 246, 0.03) 100%);
+        }
+        
+        .environment-icon {
+            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+            border-radius: 12px;
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+        }
+        
+        .environment-icon i {
+            color: #6366f1;
+        }
+        
+        .environment-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+        
+        .environment-details small {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        
+        .status-cell .badge {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+        
+        .bg-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+        }
+        
+        .bg-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
+        }
+        
+        .ports-list .badge {
+            margin: 0.125rem 0.25rem 0.125rem 0;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+        }
+        
+        .action-buttons {
+            gap: 0.5rem;
+        }
+        
+        .action-buttons .btn {
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            transition: all 0.3s ease;
+            border-width: 1.5px;
+            font-size: 0.875rem;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-outline-success:hover {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-color: #10b981;
+        }
+        
+        .btn-outline-warning:hover {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-color: #f59e0b;
+        }
+        
+        .btn-outline-primary:hover {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border-color: #6366f1;
+        }
+        
+        .btn-outline-danger:hover {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border-color: #ef4444;
+        }
+        
+        /* Modal personalizzato */
+        .modal-content {
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 1.5rem 2rem;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+        
+        .modal-body {
+            padding: 2rem;
+        }
+        
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+            background: #f8fafc;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1.5px solid #e5e7eb;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+        }
+        
+        .btn-secondary:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+        }
+        
+        #noEnvironmentsMessage {
+            padding: 4rem 2rem;
+        }
+        
+        #noEnvironmentsMessage i {
+            color: #9ca3af;
+        }
+        
+        #noEnvironmentsMessage h5 {
+            color: #6b7280;
+            font-weight: 600;
+        }
+        
+        #noEnvironmentsMessage p {
+            color: #9ca3af;
+        }
+        
+        /* === LOADING STYLES === */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .loading-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .loading-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-width: 300px;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #e5e7eb;
+            border-top: 4px solid #6366f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .loading-subtext {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+        
+        /* Inline loading per tabella */
+        .table-loading {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+        
+        .table-loading .spinner-border {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-width: 3px;
+            color: #6366f1;
+        }
+        
+        /* Loading button states */
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
+        }
+        
+        .btn-loading::after {
+            content: "";
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            color: white;
+        }
+        
+        .btn-loading .btn-text {
+            opacity: 0;
+        }
+        
+        /* Loading states per diversi tipi di operazioni */
+        .loading-create {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .loading-delete {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .loading-fetch {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h1><i class="fas fa-user-graduate me-3"></i>Dashboard Studente</h1>
+                    <p class="mb-0">Gestisci i tuoi ambienti Docker</p>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#profilo">
+                        <i class="fas fa-user me-2"></i><span class="d-none d-sm-inline">Profilo</span>
+                    </button>
+                    <button id="logoutBtn" class="btn btn-logout">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Sezione Ambienti Docker -->
+                <div class="environments-section">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3><i class="fab fa-docker me-2 text-primary"></i>I Miei Ambienti Docker</h3>
+                        <button id="newEnvironmentBtn" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Nuovo Ambiente
+                        </button>
+                    </div>
+
+                    <!-- Barra di ricerca -->
+                    <div class="row mb-3">
+                        <div class="col-md-13">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" id="searchInput" class="form-control" placeholder="Cerca ambienti...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabella Ambienti -->
+                    <div class="table-container">
+                                <div class="table-wrapper">
+                                    <table class="table table-hover">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th scope="col">
+                                                    <i class="fab fa-docker me-2"></i>Ambiente
+                                                </th>
+                                                
+                                                <th scope="col">
+                                                    <i class="fas fa-cogs me-2"></i>Azioni
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="environmentsTableBody">
+                                        <!-- Dati finti per preview 
+                                        <tr class="environment-row">
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="environment-icon me-3">
+                                                        <i class="fab fa-ubuntu fa-lg"></i>
+                                                    </div>
+                                                    <div class="environment-details">
+                                                        <div class="environment-name">Ubuntu Development</div>
+                                                        <small class="text-muted">ubuntu:latest • Creato 2 giorni fa</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex action-buttons">
+                                                    <button class="btn btn-outline-primary btn-sm action-btn" title="Accedi">
+                                                        <i class="fas fa-terminal"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-danger btn-sm action-btn" title="Elimina">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>-->
+                                        
+                                        
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <!-- Messaggio quando non ci sono ambienti -->
+                                <div id="noEnvironmentsMessage" class="text-center py-5" style="display: none;">
+                                    <i class="fab fa-docker fa-4x text-muted mb-3"></i>
+                                    <h5 class="text-muted">Nessun ambiente Docker trovato</h5>
+                                    <p class="text-muted">Crea il tuo primo ambiente per iniziare!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text" id="loadingText">Caricamento...</div>
+            <div class="loading-subtext" id="loadingSubtext">Operazione in corso</div>
+        </div>
+    </div>
+
+    <!-- Modal Nuovo Ambiente -->
+    <div class="modal fade" id="newEnvironmentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fab fa-docker me-2"></i>Crea Nuovo Ambiente Docker
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="newEnvironmentForm" onsubmit="return false;">
+                        <div class="mb-3">
+                            <label for="environmentName" class="form-label">
+                                <i class="fas fa-tag me-2"></i>Nome Ambiente *
+                            </label>
+                            <input type="text" class="form-control" id="environmentName" 
+                                   placeholder="Es: Progetto Web, Database MySQL, Server Node..." required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="environmentType" class="form-label">
+                                <i class="fas fa-code me-2"></i>Tipo di Ambiente *
+                            </label>
+                            <select class="form-select" id="environmentType" required>
+                                <option value="">Seleziona il tipo di ambiente...</option>
+                                <option value="nodejs">
+                                    <i class="fab fa-node-js"></i> Node.js - JavaScript/TypeScript
+                                </option>
+                                <option value="python">
+                                    <i class="fab fa-python"></i> Python - Flask, Django, Data Science
+                                </option>
+                                <option value="cpp">
+                                    <i class="fas fa-code"></i> C/C++ - Sviluppo nativo
+                                </option>
+                                <option value="java">
+                                    <i class="fab fa-java"></i> Java - Maven, Spring
+                                </option>
+                                <option value="vuoto">
+                                    <i class="fas fa-cube"></i> Ambiente Vuoto - Personalizzabile
+                                </option>
+                            </select>
+                            <div class="form-text">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Ogni tipo include tools preinstallati e file di esempio pronti all'uso
+                                </small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Annulla
+                    </button>
+                    <button type="button" class="btn btn-primary" id="createEnvironmentBtn">
+                        <i class="fas fa-plus me-2"></i>Crea Ambiente
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="modal fade" id="profilo" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">
+                        <i class="fas fa-user-minus me-2"></i>Il tuo profilo
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="responseProfilo"></div>
+                    <form id="profiloForm">
+                        <div class="mb-3">
+                            <label for="nomeAD" class="form-label">
+                                <i class="fas fa-user me-2"></i>Username 
+                            </label>
+                            <input type="text" class="form-control dis" id="nomeAD" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="passwordAD" class="form-label">
+                                <i class="fas fa-lock me-2"></i><span class="red">*</span>Nuova Password 
+                            </label>
+                            <input type="password" class="form-control" id="passwordAD" required>
+                        </div> 
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Annulla
+                    </button>
+                    <button type="button" class="btn btn-primary" id="inviaModificaPassword">
+                        <i class="fas fa-save me-2"></i>Cambia Password
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./src/dashboard.js"></script>
+    </body>
+</html>
