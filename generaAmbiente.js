@@ -76,14 +76,8 @@ const generaAmbiente = async (req, res) => {
         }
 
         // Aspetta che il container sia completamente pronto (ridotto)
-        console.log('⏳ Verificando container...');
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Ridotto da 3s a 1s
-
-        // Installa tools specifici per tipo ambiente (OTTIMIZZATO)
-        await installaStrumentiAmbiente(container, tipoAmbiente, workspacePath);
-
-        // Installa estensioni VS Code solo essenziali (IN BACKGROUND)
-        await installaEstensioniVSCode(container, tipoAmbiente).catch(console.warn);
+        console.log('⏳ Container verificato velocemente');
+        await new Promise(resolve => setTimeout(resolve, 500)); // Ridotto a 500ms
 
         const userDataPath = path.join(__dirname, 'workspaces', email);
         fs.mkdirSync(userDataPath, { recursive: true });

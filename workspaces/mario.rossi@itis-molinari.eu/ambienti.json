@@ -22,5 +22,18 @@
     "workspacePath": "/Users/ciro/Desktop/devCN/workspaces/mario.rossi@itis-molinari.eu/nodejs",
     "url": "http://localhost:39115",
     "status": "running"
+  },
+  {
+    "containerId": "cccbb178ab0ed27a1427a95d18f66a33ad5bd805beb9f4fab599a39e4ce16a70",
+    "containerName": "env-mario.rossi-1753221792491",
+    "nomeAmbiente": "test-velocissimo",
+    "email": "mario.rossi@itis-molinari.eu",
+    "tipoAmbiente": "nodejs",
+    "dataCreazione": "2025-07-22T22:03:15.044Z",
+    "port": 3139,
+    "workspacePath": "/Users/ciro/Desktop/devCN/workspaces/mario.rossi@itis-molinari.eu/test-velocissimo",
+    "url": "https://coding.servehttp.com/env/3139",
+    "vscodeUrl": "https://coding.servehttp.com/vscode/3139",
+    "status": "running"
   }
 ]
