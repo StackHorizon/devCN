@@ -31,6 +31,15 @@ app.use((req, res, next) => {
   }
 });
 
+// Health check endpoint per Docker
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
+
 // Array locale per memorizzare gli studenti (solo durante la sessione)
 let students = [
     // Studente di test per debugging

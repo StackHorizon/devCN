@@ -37,13 +37,27 @@ const generaAmbiente = async (req, res) => {
         const workspacePath = path.join(__dirname, 'workspaces', email, nomeAmbiente);
         fs.mkdirSync(workspacePath, { recursive: true });
 
-        // Container configuration minima per velocità
+        // Mappa le immagini Docker specifiche per ogni ambiente
+        const imageMap = {
+            'nodejs': 'devenv-nodejs:latest',
+            'python': 'devenv-python:latest',
+            'cpp': 'devenv-cpp:latest',
+            'java': 'devenv-java:latest',
+            'vuoto': 'devenv-vuoto:latest'
+        };
+
+        // Seleziona l'immagine appropriata
+        const dockerImage = imageMap[tipoAmbiente] || imageMap['vuoto'];
+
+        // Container configuration ottimizzata per ogni ambiente
         const containerConfig = {
-            Image: 'codercom/code-server:latest',
+            Image: dockerImage,
             name: containerName,
             Env: [
                 `SUDO_PASSWORD=${email}`,
-                'DEFAULT_WORKSPACE=/home/coder/project'
+                'DEFAULT_WORKSPACE=/home/coder/project',
+                `ENVIRONMENT_TYPE=${tipoAmbiente}`,
+                `USER_EMAIL=${email}`
             ],
             Cmd: ['--auth', 'none', '--bind-addr', '0.0.0.0:8080'],
             ExposedPorts: { '8080/tcp': {} },
@@ -64,6 +78,16 @@ const generaAmbiente = async (req, res) => {
                 'created.by': 'cloud-environments'
             }
         };
+
+        // Verifica che l'immagine Docker esista
+        try {
+            await docker.getImage(dockerImage).inspect();
+        } catch (error) {
+            return res.status(500).json({
+                success: false,
+                message: `Immagine Docker non trovata: ${dockerImage}. Esegui prima lo script build-images.sh per costruire le immagini.`
+            });
+        }
 
         // Crea e avvia il container
         const container = await docker.createContainer(containerConfig);
@@ -111,22 +135,16 @@ const generaAmbiente = async (req, res) => {
         ambienti.push(nuovoAmbiente);
         fs.writeFileSync(envFilePath, JSON.stringify(ambienti, null, 2));
 
+        // Setup non necessario - tutto è già configurato nelle immagini Docker
+        console.log(`✅ Ambiente ${tipoAmbiente} creato con immagine ${dockerImage}`);
+
         // Risposta immediata
         res.status(201).json({
             success: true,
-            message: `Ambiente ${nomeAmbiente} creato con successo!`,
-            ambiente: nuovoAmbiente
+            message: `Ambiente ${nomeAmbiente} (${tipoAmbiente}) creato con successo!`,
+            ambiente: nuovoAmbiente,
+            dockerImage: dockerImage
         });
-
-        // Setup minimo in background (non bloccante)
-        setTimeout(async () => {
-            try {
-                await setupAmbienteVeloce(container, tipoAmbiente, workspacePath);
-                console.log(`✅ Setup completato per ${nomeAmbiente}`);
-            } catch (error) {
-                console.warn(`⚠️ Setup warning per ${nomeAmbiente}:`, error.message);
-            }
-        }, 500);
 
     } catch (error) {
         console.error('❌ Errore creazione ambiente:', error);
@@ -134,31 +152,6 @@ const generaAmbiente = async (req, res) => {
             success: false,
             message: 'Errore durante la creazione dell\'ambiente: ' + error.message
         });
-    }
-};
-
-// Setup velocissimo e leggero (solo essenziale)
-const setupAmbienteVeloce = async (container, tipoAmbiente, workspacePath) => {
-    const setupComandi = {
-        nodejs: 'echo "console.log(\'🚀 Hello Node.js!\');" > /home/coder/project/app.js',
-        python: 'echo "print(\'🐍 Hello Python!\')" > /home/coder/project/main.py',
-        cpp: 'echo "#include<iostream>\nint main(){std::cout<<\"⚡ Hello C++!\";return 0;}" > /home/coder/project/main.cpp',
-        java: 'echo "public class Main{public static void main(String[] args){System.out.println(\"☕ Hello Java!\");}}" > /home/coder/project/Main.java',
-        vuoto: 'echo "🎉 Ambiente pronto!" > /home/coder/project/README.md'
-    };
-
-    const comando = setupComandi[tipoAmbiente] || setupComandi.vuoto;
-    
-    try {
-        const exec = await container.exec({
-            Cmd: ['sh', '-c', comando],
-            AttachStdout: false,
-            AttachStderr: false
-        });
-        await exec.start({ Detach: true });
-    } catch (error) {
-        // Ignora errori per non rallentare
-        console.warn('Setup minimo fallito, continuando...');
     }
 };
 

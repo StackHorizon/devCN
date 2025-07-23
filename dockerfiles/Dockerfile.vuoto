@@ -1,0 +1,34 @@
+# Dockerfile per ambiente vuoto (base)
+FROM codercom/code-server:latest
+
+USER root
+
+# Installa strumenti base essenziali
+RUN apt-get update && apt-get install -y \
+    git \
+    wget \
+    curl \
+    unzip \
+    tree \
+    nano \
+    vim \
+    htop \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Installa estensioni VS Code essenziali
+RUN code-server --install-extension ms-vscode.vscode-json && \
+    code-server --install-extension redhat.vscode-yaml && \
+    code-server --install-extension ms-vscode.vscode-typescript-next && \
+    code-server --install-extension esbenp.prettier-vscode
+
+USER coder
+
+# Crea ambiente di lavoro pulito
+WORKDIR /home/coder/project
+RUN echo '# Ambiente di Sviluppo 🎉\n\nBenvenuto nel tuo ambiente di sviluppo personalizzato!\n\n## Cosa puoi fare\n\n### Linguaggi supportati\nQuesto è un ambiente base che puoi personalizzare. Puoi installare:\n\n- **Node.js**: `curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - && sudo apt-get install -y nodejs`\n- **Python**: `sudo apt-get update && sudo apt-get install -y python3 python3-pip`\n- **Go**: `wget https://go.dev/dl/go1.21.0.linux-amd64.tar.gz && sudo tar -C /usr/local -xzf go1.21.0.linux-amd64.tar.gz`\n- **Rust**: `curl --proto '\''=https'\'' --tlsv1.2 -sSf https://sh.rustup.rs | sh`\n\n### Strumenti disponibili\n- **Editor**: VS Code Server con estensioni base\n- **Git**: Per version control\n- **Terminal**: Bash completo\n- **Utilities**: wget, curl, unzip, tree, nano, vim\n\n### Come iniziare\n\n1. **Crea un nuovo file**:\n   - Clicca su "New File" nel file explorer\n   - Oppure usa `touch nomefile.ext` nel terminal\n\n2. **Clona un repository**:\n   ```bash\n   git clone https://github.com/username/repo.git\n   ```\n\n3. **Installa linguaggi/tools**:\n   Usa i comandi di installazione sopra\n\n4. **Personalizza l'\''ambiente**:\n   - Installa estensioni VS Code\n   - Configura il tuo setup preferito\n\n### Estensioni VS Code installate\n- JSON Language Features\n- YAML Language Support  \n- TypeScript and JavaScript Language Features\n- Prettier Code Formatter\n\n### Tips\n- Usa `Ctrl+Shift+P` per aprire la command palette\n- Usa `Ctrl+` per aprire/chiudere il terminal\n- I file vengono salvati automaticamente nel workspace\n- Puoi installare estensioni aggiuntive tramite il marketplace\n\n## Esempi di progetti\n\n### Sito web statico\n```bash\n# Crea struttura base\nmkdir website && cd website\ntouch index.html style.css script.js\n```\n\n### Script Python\n```bash\n# Installa Python e crea script\nsudo apt-get update && sudo apt-get install -y python3 python3-pip\necho "print('\''Hello World!'\'')" > hello.py\npython3 hello.py\n```\n\n### Progetto Node.js\n```bash\n# Installa Node.js e inizializza progetto\ncurl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -\nsudo apt-get install -y nodejs\nnpm init -y\nnpm install express\n```\n\n---\n\n**Buon coding! 🚀**' > README.md
+
+RUN echo '# Workspace Files\n\n*This directory contains your project files*\n\n## Quick Start\n\n1. Create your first file\n2. Start coding!\n3. Use the terminal for any commands\n\nEnjoy your development environment! 🎯' > WORKSPACE.md
+
+EXPOSE 8080
+CMD ["--auth", "none", "--bind-addr", "0.0.0.0:8080"]

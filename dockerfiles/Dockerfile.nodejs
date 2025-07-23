@@ -1,0 +1,28 @@
+# Dockerfile per ambiente Node.js
+FROM codercom/code-server:latest
+
+USER root
+
+# Installa Node.js versione LTS
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g npm@latest yarn nodemon typescript ts-node @types/node
+
+# Installa extension VS Code per Node.js
+RUN code-server --install-extension ms-vscode.vscode-typescript-next && \
+    code-server --install-extension bradlc.vscode-tailwindcss && \
+    code-server --install-extension esbenp.prettier-vscode && \
+    code-server --install-extension ms-vscode.vscode-json
+
+USER coder
+
+# Crea progetto di esempio
+WORKDIR /home/coder/project
+RUN echo '{\n  "name": "nodejs-environment",\n  "version": "1.0.0",\n  "description": "Ambiente Node.js",\n  "main": "app.js",\n  "scripts": {\n    "start": "node app.js",\n    "dev": "nodemon app.js"\n  },\n  "dependencies": {\n    "express": "^4.18.2"\n  },\n  "devDependencies": {\n    "nodemon": "^3.0.1"\n  }\n}' > package.json
+
+RUN echo 'const express = require("express");\nconst app = express();\nconst PORT = process.env.PORT || 3000;\n\napp.get("/", (req, res) => {\n  res.json({\n    message: "🚀 Hello Node.js!",\n    timestamp: new Date().toISOString(),\n    node_version: process.version\n  });\n});\n\napp.listen(PORT, () => {\n  console.log(`🌟 Server running on port ${PORT}`);\n});' > app.js
+
+RUN echo '# Node.js Environment 🚀\n\n## Come iniziare\n\n1. Installa le dipendenze:\n```bash\nnpm install\n```\n\n2. Avvia l'\''applicazione:\n```bash\nnpm start\n```\n\n3. Per sviluppo con auto-reload:\n```bash\nnpm run dev\n```\n\n## Struttura progetto\n- `app.js` - File principale\n- `package.json` - Configurazione dipendenze\n- `README.md` - Questo file\n\n## Estensioni VS Code installate\n- TypeScript support\n- Prettier formatter\n- JSON support\n- Tailwind CSS support' > README.md
+
+EXPOSE 8080
+CMD ["--auth", "none", "--bind-addr", "0.0.0.0:8080"]

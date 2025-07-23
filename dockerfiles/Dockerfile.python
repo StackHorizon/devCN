@@ -1,0 +1,56 @@
+# Dockerfile per ambiente Python
+FROM codercom/code-server:latest
+
+USER root
+
+# Installa Python 3.11 e strumenti di sviluppo
+RUN apt-get update && apt-get install -y \
+    python3.11 \
+    python3.11-dev \
+    python3.11-venv \
+    python3-pip \
+    build-essential \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Crea link simbolici per python e pip
+RUN ln -sf /usr/bin/python3.11 /usr/bin/python && \
+    ln -sf /usr/bin/pip3 /usr/bin/pip
+
+# Installa pacchetti Python comuni
+RUN pip install --upgrade pip && \
+    pip install \
+    requests \
+    flask \
+    django \
+    fastapi \
+    uvicorn \
+    numpy \
+    pandas \
+    matplotlib \
+    seaborn \
+    jupyter \
+    black \
+    autopep8 \
+    pylint
+
+# Installa estensioni VS Code per Python
+RUN code-server --install-extension ms-python.python && \
+    code-server --install-extension ms-python.pylint && \
+    code-server --install-extension ms-python.black-formatter && \
+    code-server --install-extension ms-python.autopep8
+
+USER coder
+
+# Crea progetto di esempio
+WORKDIR /home/coder/project
+RUN echo 'flask==2.3.3\nrequests==2.31.0\nnumpy==1.24.3\npandas==2.0.3' > requirements.txt
+
+RUN echo 'from flask import Flask, jsonify\nimport datetime\nimport sys\n\napp = Flask(__name__)\n\n@app.route("/")\ndef hello():\n    return jsonify({\n        "message": "🐍 Hello Python!",\n        "timestamp": datetime.datetime.now().isoformat(),\n        "python_version": sys.version\n    })\n\nif __name__ == "__main__":\n    app.run(host="0.0.0.0", port=5000, debug=True)' > main.py
+
+RUN echo 'def fibonacci(n):\n    """Calcola la sequenza di Fibonacci fino a n numeri"""\n    if n <= 0:\n        return []\n    elif n == 1:\n        return [0]\n    elif n == 2:\n        return [0, 1]\n    \n    fib = [0, 1]\n    for i in range(2, n):\n        fib.append(fib[i-1] + fib[i-2])\n    \n    return fib\n\nif __name__ == "__main__":\n    # Esempio di utilizzo\n    print("🐍 Esempio Python - Fibonacci")\n    numbers = fibonacci(10)\n    print(f"Primi 10 numeri di Fibonacci: {numbers}")' > example.py
+
+RUN echo '# Python Environment 🐍\n\n## Come iniziare\n\n1. Installa le dipendenze:\n```bash\npip install -r requirements.txt\n```\n\n2. Avvia l'\''applicazione Flask:\n```bash\npython main.py\n```\n\n3. Oppure esegui l'\''esempio:\n```bash\npython example.py\n```\n\n## Struttura progetto\n- `main.py` - Applicazione Flask principale\n- `example.py` - Esempio con Fibonacci\n- `requirements.txt` - Dipendenze Python\n- `README.md` - Questo file\n\n## Pacchetti Python installati\n- Flask - Web framework\n- Requests - HTTP client\n- NumPy - Calcoli numerici\n- Pandas - Analisi dati\n- Matplotlib/Seaborn - Visualizzazione\n- Jupyter - Notebook interattivi\n\n## Estensioni VS Code installate\n- Python support\n- Pylint linter\n- Black formatter\n- Autopep8 formatter' > README.md
+
+EXPOSE 8080
+CMD ["--auth", "none", "--bind-addr", "0.0.0.0:8080"]

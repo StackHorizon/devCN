@@ -1,9 +1,66 @@
-version: '3'
+version: '3.8'
+
 services:
+  # Server principale devCN
   app:
-    build: ./
+    build: 
+      context: .
+      dockerfile: dockerfile
     ports:
       - "3000:3000"
     volumes:
+      # Socket Docker per gestire container
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./data:/app/data
+      # Directory workspace persistente
+      - ./workspaces:/app/workspaces
+      # File di configurazione
+      - ./conf.json:/app/conf.json:ro
+      - ./admin.json:/app/admin.json:ro
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    restart: unless-stopped
+    depends_on:
+      - redis
+    networks:
+      - devnet
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Redis per cache e sessioni (opzionale)
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - devnet
+    command: redis-server --appendonly yes
+
+  # Nginx reverse proxy (opzionale, per produzione)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - app
+    networks:
+      - devnet
+    restart: unless-stopped
+    profiles:
+      - production
+
+volumes:
+  redis_data:
+
+networks:
+  devnet:
+    driver: bridge
